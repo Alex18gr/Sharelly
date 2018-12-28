@@ -15,4 +15,6 @@
     <string name="create_account_link">create new Account</string>
     <string name="auth_failed">Registration failed.</string>
     <string name="title_profile">Profile</string>
+    <string name="logout">logout</string>
+    <string name="profile">Profile</string>
 </resources>

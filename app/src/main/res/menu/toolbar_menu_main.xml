@@ -7,6 +7,6 @@
         app:showAsAction="ifRoom|withText"
         android:title="@string/share" />
     <item
-        android:id="@+id/miSetting"
+        android:id="@+id/miSettings"
         android:title="@string/settings" />
 </menu>
