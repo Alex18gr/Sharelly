@@ -155,9 +155,24 @@ public class ProfileFragment extends Fragment {
         outState.putString("user", textView.getText().toString());
 
         // Save the fragment's instance
-        getFragmentManager().putFragment(outState, "ProfileFragment", mContent);
+        // getFragmentManager().putFragment(outState, "ProfileFragment", mContent);
 
+    }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState!=null) {
+            // Retrieve the values...
+            
+            // Do not need below code, because android os will automatically save and restore view objects value that has id attribute.
+            // EditText userEmailInputBox = getActivity().findViewById(R.id.fragment_instance_state_user_email_edit_box);
+            //userEmailInputBox.setText(userEmail);
+            String restoredUserText = savedInstanceState.getString("user");
+            textView.setText(restoredUserText);
+            Log.d(TAG, "onViewStateRestored: Fragment onViewStateRestored called");
+        }
     }
 
     @Override
@@ -170,11 +185,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            //Restore the fragment's instance
-            mContent = getFragmentManager().getFragment(savedInstanceState, "ProfileFragment");
 
-        }
         mModel = ViewModelProviders.of(getActivity()).get(UserModel.class);
 
         Observer<User> userObserver = new Observer<User>() {

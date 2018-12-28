@@ -29,7 +29,19 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        loadFragment(new ProfileFragment());
+        boolean addNewFragment = true;
+
+        // If turn the screen orientation then the savedInstanceState is not null.
+        // In this condition, do not need to add new fragment again.
+        if(savedInstanceState!=null)
+        {
+            addNewFragment = false;
+        }
+
+        if (addNewFragment) {
+            loadFragment(new ProfileFragment());
+        }
+
 
         setupBottomNavigationView();
     }
