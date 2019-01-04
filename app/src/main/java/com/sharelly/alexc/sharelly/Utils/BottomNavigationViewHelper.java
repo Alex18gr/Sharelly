@@ -1,5 +1,6 @@
 package com.sharelly.alexc.sharelly.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
@@ -8,6 +9,7 @@ import com.sharelly.alexc.sharelly.Dashboard.DashboardActivity;
 import com.sharelly.alexc.sharelly.MainActivity;
 import com.sharelly.alexc.sharelly.Profile.ProfileActivity;
 import com.sharelly.alexc.sharelly.R;
+import com.sharelly.alexc.sharelly.Share.ShareActivity;
 
 import androidx.annotation.NonNull;
 
@@ -15,7 +17,7 @@ public class BottomNavigationViewHelper {
 
     private static final String TAG = "BottomNavigationViewHel";
 
-    public static void enableNavigation(final Context context, BottomNavigationView bottomNavigationView) {
+    public static void enableNavigation(final Context context, final Activity callingActivity, BottomNavigationView bottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -23,23 +25,28 @@ public class BottomNavigationViewHelper {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         Intent intent1 = new Intent(context, MainActivity.class);
-                        intent1.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         context.startActivity(intent1);
+                        callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
                     case R.id.navigation_dashboard:
                         Intent intent2 = new Intent(context, DashboardActivity.class);
-                        intent2.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         context.startActivity(intent2);
+                        callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
                     case R.id.navigation_notifications:
                         Intent intent3 = new Intent(context, MainActivity.class);
-                        intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         context.startActivity(intent3);
+                        callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
                     case R.id.navigation_profile:
                         Intent intent4 = new Intent(context, ProfileActivity.class);
-                        intent4.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         context.startActivity(intent4);
+                        callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        break;
+                    case R.id.navigation_share:
+                        Intent intent5 = new Intent(context, ShareActivity.class);
+                        context.startActivity(intent5);
+                        callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
                 }
 

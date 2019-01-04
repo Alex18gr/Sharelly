@@ -38,7 +38,7 @@ public class DashboardActivity extends AppCompatActivity {
     private void setupBottomNavigationView() {
         Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        BottomNavigationViewHelper.enableNavigation(mContext, navigation);
+        BottomNavigationViewHelper.enableNavigation(mContext,this, navigation);
         //navigation.setOnNavigationItemSelectedListener(this);
         Menu menu = navigation.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);

@@ -9,21 +9,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sharelly.alexc.sharelly.Login.LoginActivity;
-import com.sharelly.alexc.sharelly.MainActivity;
 import com.sharelly.alexc.sharelly.Models.User;
 import com.sharelly.alexc.sharelly.R;
 import com.sharelly.alexc.sharelly.Utils.ExpandableHeightGridView;
@@ -31,7 +26,6 @@ import com.sharelly.alexc.sharelly.Utils.GridImageAdapter;
 import com.sharelly.alexc.sharelly.ViewModels.UserModel;
 
 import java.util.ArrayList;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

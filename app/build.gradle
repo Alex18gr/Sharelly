@@ -18,6 +18,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'API_KEY_OMDB', OmdbApiKey
+        it.buildConfigField 'String', 'API_KEY_LAST_FM', LastFmApiKey
+    }
 }
 
 dependencies {
@@ -38,4 +43,5 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation 'androidx.fragment:fragment:1.0.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

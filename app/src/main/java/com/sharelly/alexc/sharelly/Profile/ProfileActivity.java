@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sharelly.alexc.sharelly.R;
@@ -17,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final int ACTIVITY_NUM = 3;
+    private static final int ACTIVITY_NUM = 4;
 
     private static final String TAG = "ProfileActivity";
 
@@ -49,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void setupBottomNavigationView() {
         Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        BottomNavigationViewHelper.enableNavigation(mContext, navigation);
+        BottomNavigationViewHelper.enableNavigation(mContext, this, navigation);
         //navigation.setOnNavigationItemSelectedListener(this);
         Menu menu = navigation.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
