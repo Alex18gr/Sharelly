@@ -53,27 +53,35 @@ public class ShareActivity extends AppCompatActivity {
 
             Intent intent = getIntent();
 
-            String action = intent.getAction();
-            Set<String> categories = intent.getCategories();
-            Uri data = intent.getData();
-            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            String manipulatedText = null;
-            if (data != null) {
-                Log.d(TAG, "onCreate: data uri is: " + data);
-            }
-            if (sharedText != null) {
-                Log.d(TAG, "onCreate: extra text from package >" + intent.getPackage() + "< data: " + sharedText);
-                Log.d(TAG, "onCreate: " + intent.getAction() + ", "
-                 + intent.getScheme() + ", " + intent.getDataString());
-                manipulatedText = manipulateStringOmdb(sharedText);
+            if (!intent.getExtras().containsKey(BottomNavigationViewHelper.FROM_MENU)) {
+                Log.d(TAG, "onCreate: intent is not null");
+                String action = intent.getAction();
+                Set<String> categories = intent.getCategories();
+                Uri data = intent.getData();
+                String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                String manipulatedText = null;
+                if (data != null) {
+                    Log.d(TAG, "onCreate: data uri is: " + data);
+                }
+                if (sharedText != null) {
+                    Log.d(TAG, "onCreate: extra text from package >" + intent.getPackage() + "< data: " + sharedText);
+                    Log.d(TAG, "onCreate: " + intent.getAction() + ", "
+                            + intent.getScheme() + ", " + intent.getDataString());
+                    manipulatedText = manipulateStringOmdb(sharedText);
+                }
+
+                ShareMovieFragment fragment = new ShareMovieFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putString("id", manipulatedText);
+                fragment.setArguments(bundle);
+                loadFragment(fragment);
+            } else {
+                Log.d(TAG, "onCreate: intent is empty, go to search fragment...");
+                loadFragment(new SearchFragment());
             }
 
-            ShareMovieFragment fragment = new ShareMovieFragment();
 
-            Bundle bundle = new Bundle();
-            bundle.putString("id", manipulatedText);
-            fragment.setArguments(bundle);
-            loadFragment(fragment);
         }
 
         setupBottomNavigationView();
@@ -145,7 +153,7 @@ public class ShareActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        super.onStart();
+            super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
 

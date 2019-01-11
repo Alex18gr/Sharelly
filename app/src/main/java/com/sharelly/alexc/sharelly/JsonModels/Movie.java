@@ -1,6 +1,9 @@
 package com.sharelly.alexc.sharelly.JsonModels;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Movie {
 	
@@ -33,6 +36,10 @@ public class Movie {
 	
 	@SerializedName("imdbID")
 	private String imdbId;
+
+	@SerializedName("Ratings")
+	@Expose
+	private List<Rating> ratings = null;
 
 	public String getTitle() {
 		return title;
@@ -114,15 +121,64 @@ public class Movie {
 		this.imdbId = imdbId;
 	}
 
+	public List<Rating> getRatings() {
+		return ratings;
+	}
+
 	@Override
 	public String toString() {
-		return "Movie [title=" + title + ", year=" + year + ", Realised=" + Realised + ", genre=" + genre
-				+ ", director=" + director + ", runtime=" + runtime + ", plot=" + plot + ", poster=" + poster
-				+ ", imdbRating=" + imdbRating + ", imdbId=" + imdbId + "]";
+		return "Movie{" +
+				"title='" + title + '\'' +
+				", year='" + year + '\'' +
+				", Realised='" + Realised + '\'' +
+				", genre='" + genre + '\'' +
+				", director='" + director + '\'' +
+				", runtime='" + runtime + '\'' +
+				", plot='" + plot + '\'' +
+				", poster='" + poster + '\'' +
+				", imdbRating='" + imdbRating + '\'' +
+				", imdbId='" + imdbId + '\'' +
+				", ratings=" + ratings +
+				'}';
 	}
-	
-	
-	
+
+	public void setRatings(List<Rating> ratings) {
+		this.ratings = ratings;
+	}
+
+	public class Rating {
+
+		@SerializedName("Source")
+		@Expose
+		private String source;
+		@SerializedName("Value")
+		@Expose
+		private String value;
+
+		public String getSource() {
+			return source;
+		}
+
+		public void setSource(String source) {
+			this.source = source;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return "Rating{" +
+					"source='" + source + '\'' +
+					", value='" + value + '\'' +
+					'}';
+		}
+	}
 	
 
 }

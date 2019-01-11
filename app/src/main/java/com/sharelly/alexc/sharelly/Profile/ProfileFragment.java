@@ -9,15 +9,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.sharelly.alexc.sharelly.CustomViews.WrapContentHeightViewPager;
 import com.sharelly.alexc.sharelly.Login.LoginActivity;
 import com.sharelly.alexc.sharelly.Models.User;
 import com.sharelly.alexc.sharelly.R;
@@ -31,9 +34,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 
 public class ProfileFragment extends Fragment {
 
@@ -41,6 +46,9 @@ public class ProfileFragment extends Fragment {
     private View view;
     private Toolbar toolbar;
     private UserModel mModel;
+
+    private TabLayout tabLayout;
+    private WrapContentHeightViewPager viewPager;
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
@@ -62,7 +70,20 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         this.view = view;
         super.onViewCreated(view, savedInstanceState);
+        NestedScrollView scrollView = view.findViewById(R.id.profileScrollView);
+        //scrollView.setFillViewport(true);
         textView = view.findViewById(R.id.textView1);
+        tabLayout = view.findViewById(R.id.tabLayoutProfile);
+        viewPager = view.findViewById(R.id.viewPager);
+
+        ProfileViewPagerAdapter pagerAdapter =
+                new ProfileViewPagerAdapter(getActivity()
+                        .getSupportFragmentManager());
+        if (pagerAdapter != null) Log.d(TAG, "onViewCreated: pager adapter NOT null");
+        pagerAdapter.addFragment(new MoviesFragment(), "Movies");
+        pagerAdapter.addFragment(new SongsFragment(), "Songs");
+        viewPager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 //        StringBuilder stringBuilder = new StringBuilder();
 //        for (int i = 0; i < 100;i++) stringBuilder.append("PAOK thriskeia gamietai h super 3!!!!");
 //        textView.setText(stringBuilder.toString());
@@ -129,6 +150,8 @@ public class ProfileFragment extends Fragment {
         });
 
     }
+
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

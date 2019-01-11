@@ -9,6 +9,7 @@ import com.sharelly.alexc.sharelly.Dashboard.DashboardActivity;
 import com.sharelly.alexc.sharelly.MainActivity;
 import com.sharelly.alexc.sharelly.Profile.ProfileActivity;
 import com.sharelly.alexc.sharelly.R;
+import com.sharelly.alexc.sharelly.Search.SearchActivity;
 import com.sharelly.alexc.sharelly.Share.ShareActivity;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 public class BottomNavigationViewHelper {
 
     private static final String TAG = "BottomNavigationViewHel";
+    public static final String FROM_MENU = "from_menu";
 
     public static void enableNavigation(final Context context, final Activity callingActivity, BottomNavigationView bottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -33,8 +35,8 @@ public class BottomNavigationViewHelper {
                         context.startActivity(intent2);
                         callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
-                    case R.id.navigation_notifications:
-                        Intent intent3 = new Intent(context, MainActivity.class);
+                    case R.id.navigation_search:
+                        Intent intent3 = new Intent(context, SearchActivity.class);
                         context.startActivity(intent3);
                         callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
@@ -45,6 +47,7 @@ public class BottomNavigationViewHelper {
                         break;
                     case R.id.navigation_share:
                         Intent intent5 = new Intent(context, ShareActivity.class);
+                        intent5.putExtra(FROM_MENU, 1);
                         context.startActivity(intent5);
                         callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;

@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new DashboardFragment();
                 break;
 
-            case R.id.navigation_notifications:
+            case R.id.navigation_search:
                 fragment = new NotificationFragment();
                 break;
 

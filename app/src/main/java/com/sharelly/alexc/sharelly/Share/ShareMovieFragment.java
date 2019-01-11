@@ -4,14 +4,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.sharelly.alexc.sharelly.BuildConfig;
 import com.sharelly.alexc.sharelly.JsonModels.Movie;
 import com.sharelly.alexc.sharelly.R;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +26,8 @@ import java.net.URL;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 public class ShareMovieFragment extends Fragment {
@@ -29,16 +35,24 @@ public class ShareMovieFragment extends Fragment {
     private static final String TAG = "ShareMovieFragment";
 
     private View view;
-    private TextView textView;
     private String action;
     private String data;
+    private Movie receivedMovie = null;
 
+    // widgets
+    private ImageView expandedImageView;
+    private Toolbar toolbar;
+    private FloatingActionButton fab;
+    private TextView textView;
+    private TextView imdbScoreTxt;
+    private TextView rottenScoreTxt;
+    private TextView metaScoreTxt;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_share, container, false);
+        view = inflater.inflate(R.layout.fragment_share_movie, container, false);
         data = getArguments().getString("id");
         return view;
     }
@@ -50,9 +64,10 @@ public class ShareMovieFragment extends Fragment {
         textView = view.findViewById(R.id.txtShare);
 
 
-        textView.setText(data);
+        //textView.setText(data);
         Log.d(TAG, "onViewCreated: data set");
-
+        setupWidgets();
+        setupToolbar();
 
         if (data != null){
             Log.d(TAG, "onViewCreated: executing down load async task");
@@ -61,6 +76,59 @@ public class ShareMovieFragment extends Fragment {
         } else {
             Log.d(TAG, "onViewCreated: error: data is NULL");
         }
+
+
+
+    }
+
+    private void setupToolbar() {
+        toolbar = view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return false;
+            }
+        });
+    }
+
+    private void loadData() {
+        Picasso.get().load(receivedMovie.getPoster()).into(expandedImageView);
+        toolbar.setTitle(receivedMovie.getTitle());
+        textView.setText(receivedMovie.getYear() + " \u00B7 "+
+        receivedMovie.getGenre());
+        for (Movie.Rating rating : receivedMovie.getRatings()) {
+            if (rating.getSource().equals("Internet Movie Database"))  {
+                imdbScoreTxt.setText(rating.getValue());
+            } else if (rating.getSource().equals("Rotten Tomatoes")) {
+                rottenScoreTxt.setText(receivedMovie.getRatings().get(1).getValue());
+            } else if (rating.getSource().equals("Metacritic")) {
+                metaScoreTxt.setText(receivedMovie.getRatings().get(2).getValue());
+            }
+        }
+
+        if (imdbScoreTxt.getText().toString().equals("TextView")) {
+            imdbScoreTxt.setVisibility(View.GONE);
+            view.findViewById(R.id.imdbRatingTxt).setVisibility(View.GONE);
+        }
+        if (rottenScoreTxt.getText().toString().equals("TextView")) {
+            rottenScoreTxt.setVisibility(View.GONE);
+            view.findViewById(R.id.rtRatingTxt).setVisibility(View.GONE);
+        }
+        if (metaScoreTxt.getText().toString().equals("TextView")) {
+            metaScoreTxt.setVisibility(View.GONE);
+            view.findViewById(R.id.mcRatingTxt).setVisibility(View.GONE);
+        }
+
+    }
+
+    private void setupWidgets() {
+        expandedImageView = view.findViewById(R.id.expandedImage);
+        fab = view.findViewById(R.id.fab);
+        imdbScoreTxt = view.findViewById(R.id.imdbRatingNumTxt);
+        rottenScoreTxt = view.findViewById(R.id.rtRatingNumTxt2);
+        metaScoreTxt = view.findViewById(R.id.mcRatingNumTxt);
 
     }
 
@@ -72,10 +140,13 @@ public class ShareMovieFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Gson gson = new Gson();
-            Movie receivedMovie = gson.fromJson(s, Movie.class);
+            receivedMovie = gson.fromJson(s, Movie.class);
             if (receivedMovie != null) {
                 Log.d(TAG, "onPostExecute: received movie: " + receivedMovie);
                 textView.append("\n" + receivedMovie);
+
+                loadData();
+
             } else {
                 Log.d(TAG, "onPostExecute: error receiving the movie, is NULL");
             }

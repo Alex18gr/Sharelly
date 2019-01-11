@@ -17,4 +17,10 @@
     <string name="title_profile">Profile</string>
     <string name="logout">logout</string>
     <string name="profile">Profile</string>
+    <string name="title_search">Search</string>
+    <string-array name="search_array">
+        <item>Movie</item>
+        <item>Song</item>
+        <item>Video</item>
+    </string-array>
 </resources>
