@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sharelly.alexc.sharelly.Login.LoginActivity;
 import com.sharelly.alexc.sharelly.Models.User;
+import com.sharelly.alexc.sharelly.Profile.ProfileActivity;
 import com.sharelly.alexc.sharelly.R;
 import com.sharelly.alexc.sharelly.Utils.BottomNavigationViewHelper;
 
@@ -61,6 +63,18 @@ public class SearchActivity extends AppCompatActivity {
         searchResultsListView = findViewById(R.id.listViewSearchResults);
         adapter = new SearchUserAdapter(this, mUsers);
         searchResultsListView.setAdapter(adapter);
+
+        searchResultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "onItemClick: selected user: " + mUsers.get(i));
+
+                Intent intent = new Intent(SearchActivity.this, ProfileActivity.class);
+                intent.putExtra(getString(R.string.calling_activity), getString(R.string.search_activity));
+                intent.putExtra(getString(R.string.intent_user), mUsers.get(i));
+                startActivity(intent);
+            }
+        });
 
         searchText = findViewById(R.id.search);
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

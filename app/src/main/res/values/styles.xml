@@ -18,8 +18,8 @@
         <item name="actionMenuTextColor">@color/white</item>
         <!-- Enable these below if you want clicking icons to trigger a ripple effect -->
         <!--
-        <item name="selectableItemBackground">?android:selectableItemBackground</item>
-        <item name="selectableItemBackgroundBorderless">?android:selectableItemBackground</item>
+        <item title="selectableItemBackground">?android:selectableItemBackground</item>
+        <item title="selectableItemBackgroundBorderless">?android:selectableItemBackground</item>
         -->
     </style>
 

@@ -1,11 +1,14 @@
 package com.sharelly.alexc.sharelly.JsonModels;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Movie {
+public class Movie implements Parcelable {
 	
 	@SerializedName("Title")
 	private String title;
@@ -40,6 +43,31 @@ public class Movie {
 	@SerializedName("Ratings")
 	@Expose
 	private List<Rating> ratings = null;
+
+	protected Movie(Parcel in) {
+		title = in.readString();
+		year = in.readString();
+		Realised = in.readString();
+		genre = in.readString();
+		director = in.readString();
+		runtime = in.readString();
+		plot = in.readString();
+		poster = in.readString();
+		imdbRating = in.readString();
+		imdbId = in.readString();
+	}
+
+	public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+		@Override
+		public Movie createFromParcel(Parcel in) {
+			return new Movie(in);
+		}
+
+		@Override
+		public Movie[] newArray(int size) {
+			return new Movie[size];
+		}
+	};
 
 	public String getTitle() {
 		return title;
@@ -146,7 +174,26 @@ public class Movie {
 		this.ratings = ratings;
 	}
 
-	public class Rating {
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeString(title);
+		parcel.writeString(year);
+		parcel.writeString(Realised);
+		parcel.writeString(genre);
+		parcel.writeString(director);
+		parcel.writeString(runtime);
+		parcel.writeString(plot);
+		parcel.writeString(poster);
+		parcel.writeString(imdbRating);
+		parcel.writeString(imdbId);
+	}
+
+    public class Rating {
 
 		@SerializedName("Source")
 		@Expose

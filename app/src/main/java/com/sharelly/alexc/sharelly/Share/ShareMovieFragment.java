@@ -1,5 +1,7 @@
 package com.sharelly.alexc.sharelly.Share;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,9 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.sharelly.alexc.sharelly.BuildConfig;
 import com.sharelly.alexc.sharelly.JsonModels.Movie;
+import com.sharelly.alexc.sharelly.Models.Post;
 import com.sharelly.alexc.sharelly.R;
 import com.squareup.picasso.Picasso;
 
@@ -47,6 +51,8 @@ public class ShareMovieFragment extends Fragment {
     private TextView imdbScoreTxt;
     private TextView rottenScoreTxt;
     private TextView metaScoreTxt;
+
+    private Fragment fragment = this;
 
     @Nullable
     @Override
@@ -95,7 +101,7 @@ public class ShareMovieFragment extends Fragment {
 
     private void loadData() {
         Picasso.get().load(receivedMovie.getPoster()).into(expandedImageView);
-        toolbar.setTitle(receivedMovie.getTitle());
+        ((ShareActivity)getActivity()).setActionBarTitle(receivedMovie.getTitle());
         textView.setText(receivedMovie.getYear() + " \u00B7 "+
         receivedMovie.getGenre());
         for (Movie.Rating rating : receivedMovie.getRatings()) {
@@ -110,25 +116,76 @@ public class ShareMovieFragment extends Fragment {
 
         if (imdbScoreTxt.getText().toString().equals("TextView")) {
             imdbScoreTxt.setVisibility(View.GONE);
-            view.findViewById(R.id.imdbRatingTxt).setVisibility(View.GONE);
+            view.findViewById(R.id.postsTxt).setVisibility(View.GONE);
         }
         if (rottenScoreTxt.getText().toString().equals("TextView")) {
             rottenScoreTxt.setVisibility(View.GONE);
-            view.findViewById(R.id.rtRatingTxt).setVisibility(View.GONE);
+            view.findViewById(R.id.followersTxt).setVisibility(View.GONE);
         }
         if (metaScoreTxt.getText().toString().equals("TextView")) {
             metaScoreTxt.setVisibility(View.GONE);
-            view.findViewById(R.id.mcRatingTxt).setVisibility(View.GONE);
+            view.findViewById(R.id.followingTxt).setVisibility(View.GONE);
         }
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == NewPostDialog.REQUEST_CODE) {
+                String mTitle = data.getStringExtra(getString(R.string.new_post_dialog_title));
+                String mDescription = data.getStringExtra(getString(R.string.new_post_dialog_description));
+                Log.d(TAG, "onActivityResult: recieved title: " + mTitle
+                        + " and description: " + mDescription);
+                createNewPost(mTitle, mDescription);
+            }
+        }
+
+
+    }
+
+    private void createNewPost(String mTitle, String mDescription) {
+
+        Post newPost = new Post();
+
+        newPost.setContentId(receivedMovie.getImdbId());
+        newPost.setType(getString(R.string.content_type_movie_omdb));
+        newPost.setName(mTitle);
+        newPost.setDescription(mDescription);
+        newPost.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        Log.d(TAG, "createNewPost: creating new post :" + newPost);
+
+        
     }
 
     private void setupWidgets() {
         expandedImageView = view.findViewById(R.id.expandedImage);
         fab = view.findViewById(R.id.fab);
-        imdbScoreTxt = view.findViewById(R.id.imdbRatingNumTxt);
-        rottenScoreTxt = view.findViewById(R.id.rtRatingNumTxt2);
-        metaScoreTxt = view.findViewById(R.id.mcRatingNumTxt);
+        imdbScoreTxt = view.findViewById(R.id.postsNumTxt);
+        rottenScoreTxt = view.findViewById(R.id.followersNumTxt);
+        metaScoreTxt = view.findViewById(R.id.followingNumTxt);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()){
+
+                    case R.id.fab:{
+                        //create a new note
+                        NewPostDialog dialog = new NewPostDialog();
+                        Bundle args = new Bundle();
+                        args.putParcelable(getString(R.string.share_movie), receivedMovie);
+                        dialog.setArguments(args);
+                        dialog.setTargetFragment(ShareMovieFragment.this, NewPostDialog.REQUEST_CODE);
+                        dialog.show(getActivity().getSupportFragmentManager(), getString(R.string.dialog_new_post));
+                        break;
+                    }
+                }
+            }
+        });
 
     }
 

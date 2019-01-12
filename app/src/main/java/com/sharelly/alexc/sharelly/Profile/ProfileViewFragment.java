@@ -9,7 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -17,18 +17,22 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sharelly.alexc.sharelly.CustomViews.WrapContentHeightViewPager;
 import com.sharelly.alexc.sharelly.Login.LoginActivity;
 import com.sharelly.alexc.sharelly.Models.User;
+import com.sharelly.alexc.sharelly.Models.UserFollow;
 import com.sharelly.alexc.sharelly.R;
 import com.sharelly.alexc.sharelly.Utils.ExpandableHeightGridView;
 import com.sharelly.alexc.sharelly.Utils.GridImageAdapter;
 import com.sharelly.alexc.sharelly.ViewModels.UserModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,9 +42,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
 
-public class ProfileFragment extends Fragment {
+public class ProfileViewFragment extends Fragment {
 
     private TextView textView;
     private View view;
@@ -54,17 +57,20 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
 
 
-    private static final String TAG = "ProfileFragment";
+    private static final String TAG = "ProfileViewFragment";
     private Fragment mContent;
     private TextView fullNameTxt;
     private TextView emailTxt;
     private NestedScrollView scrollView;
+    private Button followBtn;
+    private Button unfollowBtn;
+    private User currentUser;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_view_profile, container, false);
 
         return view;
     }
@@ -87,7 +93,9 @@ public class ProfileFragment extends Fragment {
         tempGridSetup();
         if (savedInstanceState == null) {
             Log.d(TAG, "onViewCreated: savedInstanceState is null !!!");
+            currentUser = getArguments().getParcelable(getString(R.string.intent_user));
             getUserDetails();
+            isFollowing();
         } else {
             Log.d(TAG, "onViewCreated: savedInstanceState NOT null.");
         }
@@ -99,6 +107,124 @@ public class ProfileFragment extends Fragment {
         textView = view.findViewById(R.id.textView4);
         fullNameTxt = view.findViewById(R.id.fullNameTxt);
         emailTxt = view.findViewById(R.id.emailTxt);
+        followBtn = view.findViewById(R.id.buttonFollow);
+        unfollowBtn = view.findViewById(R.id.buttonUnfollow);
+
+        followBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: now following " + currentUser.getUser_id());
+
+                // Map<String, Object> userData = new HashMap<>();
+                // userData.put("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                UserFollow userData = new UserFollow(FirebaseAuth.getInstance()
+                        .getCurrentUser().getUid());
+
+                FirebaseFirestore.getInstance()
+                        .collection("followers")
+                        .document(currentUser.getUser_id())
+                        .collection("users")
+                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .set(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // Map<String, Object> userData = new HashMap<>();
+                            // userData.put("user_id", currentUser.getUser_id());
+                            UserFollow userData = new UserFollow(currentUser.getUser_id());
+
+                            FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.db_collection_following))
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .collection(getString(R.string.db_collection_follow_users))
+                                    .document(currentUser.getUser_id())
+                                    .set(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "onComplete: following successful");
+                                        setFollowing();
+                                    } else {
+                                        Log.d(TAG, "onComplete: could not add following. Check logs.");
+                                    }
+                                }
+                            });
+                        } else{
+                            Log.d(TAG, "onComplete: could not add follower. Check logs.");
+                        }
+                    }
+                });
+
+            }
+        });
+
+        unfollowBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: now unfollowing");
+
+                FirebaseFirestore.getInstance()
+                        .collection(getString(R.string.db_collection_followers))
+                        .document(currentUser.getUser_id())
+                        .collection(getString(R.string.db_collection_follow_users))
+                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "onComplete: unfolllowing follower deletion successful");
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("following")
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .collection("users")
+                                    .document(currentUser.getUser_id())
+                                    .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "onComplete: unfollowing following deletion successful.");
+                                        Log.d(TAG, "onComplete: Unfollow successful");
+                                        setUnfollowing();
+                                    } else {
+                                        Log.d(TAG, "onComplete: unfollowing follwoing deletion failed. Check logs.");
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.d(TAG, "onComplete: unfollowing follower deletion failed. Check logs.");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void isFollowing() {
+        setUnfollowing();
+
+        FirebaseFirestore.getInstance()
+                .collection(getString(R.string.db_collection_following))
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection(getString(R.string.db_collection_follow_users))
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    QuerySnapshot document = task.getResult();
+                    Log.d(TAG, "onComplete: following users:");
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        UserFollow tempUser = documentSnapshot.toObject(UserFollow.class);
+                        Log.d(TAG, "onComplete: " + tempUser);
+                        if (tempUser.getUser_id().equals(currentUser.getUser_id()))
+                            setFollowing();
+                    }
+
+                } else {
+                    Log.d(TAG, "onComplete: could not obtain following. Check logs.");
+                }
+            }
+        });
     }
 
     private void setupTabLayoutAndViewPager() {
@@ -120,7 +246,7 @@ public class ProfileFragment extends Fragment {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             db.collection("users")
-                    .whereEqualTo("user_id", mAuth.getCurrentUser().getUid()).limit(1)
+                    .whereEqualTo("user_id", currentUser.getUser_id()).limit(1)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -143,27 +269,22 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    private void setFollowing() {
+        Log.d(TAG, "setFollowing: setting up UI for following this user");
+        followBtn.setVisibility(View.GONE);
+        unfollowBtn.setVisibility(View.VISIBLE);
+    }
+
+    private void setUnfollowing() {
+        Log.d(TAG, "setUnfollowing: setting up UI for unfollowing this user");
+        followBtn.setVisibility(View.VISIBLE);
+        unfollowBtn.setVisibility(View.GONE);
+    }
+
     private void setupToolbar() {
 
         toolbar = view.findViewById(R.id.home_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Log.d(TAG, "onMenuItemClick: clicked menu item");
-
-                switch(item.getItemId()) {
-                    case R.id.miLogout:
-                        Log.d(TAG, "onMenuItemClick: Navigating to Profile Preferences");
-//                        Intent intent = new Intent(getActivity(), AccountSettingActivity.class);
-//                        startActivity(intent);
-                        break;
-                }
-
-                return false;
-            }
-        });
 
     }
 
@@ -210,7 +331,6 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_profile, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

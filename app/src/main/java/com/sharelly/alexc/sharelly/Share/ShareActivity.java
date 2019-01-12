@@ -88,6 +88,10 @@ public class ShareActivity extends AppCompatActivity {
 
     }
 
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
     private String manipulateStringOmdb(String txt) {
         String[] strings = txt.split("\n");
         Log.d(TAG, "manipulateStringOmdb: >" + strings[0] + "< and >" + strings[1] + "<.");

@@ -58,7 +58,8 @@ public class SearchSongAdapter extends ArrayAdapter<TrackSearch> {
         viewHolder.placeName.setText(track.getName());
         viewHolder.placeArtistAlbum.setText(track.getArtist() + " \u00B7 " +
                 "last.fm listeners: " + track.getListeners());
-        Picasso.get().load(track.getImage().get(3).getText()).into(viewHolder.placeCover);
+        if (track.getImage().get(3).getText() != null && !track.getImage().get(3).getText().equals(""))
+            Picasso.get().load(track.getImage().get(3).getText()).into(viewHolder.placeCover);
 
         return  rowView;
     }

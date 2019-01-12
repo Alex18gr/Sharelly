@@ -18,6 +18,19 @@
     <string name="logout">logout</string>
     <string name="profile">Profile</string>
     <string name="title_search">Search</string>
+    <string name="intent_user">intent_user</string>
+    <string name="calling_activity">calling_activity</string>
+    <string name="search_activity">Search_activity</string>
+    <string name="db_collection_followers">followers</string>
+    <string name="db_collection_following">following</string>
+    <string name="db_collection_follow_users">users</string>
+    <string name="new_post_title">Title</string>
+    <string name="new_post_description">Description</string>
+    <string name="dialog_new_post">dialogNewPost</string>
+    <string name="share_movie">share_moviee_dialog</string>
+    <string name="new_post_dialog_title">new_post_dialog_title</string>
+    <string name="new_post_dialog_description">new_post_dialog_description</string>
+    <string name="content_type_movie_omdb">movie/omdb</string>
     <string-array name="search_array">
         <item>Movie</item>
         <item>Song</item>
