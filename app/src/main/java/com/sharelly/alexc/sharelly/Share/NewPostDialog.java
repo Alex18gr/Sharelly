@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sharelly.alexc.sharelly.JsonModels.Movie;
+import com.sharelly.alexc.sharelly.JsonModels.Track;
 import com.sharelly.alexc.sharelly.R;
 
 import androidx.annotation.NonNull;
@@ -64,8 +65,17 @@ public class NewPostDialog extends DialogFragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
-            mMovie = getArguments().getParcelable(getString(R.string.share_movie));
-            Log.d(TAG, "onViewCreated: moview to share: " + mMovie);
+            Object obj = getArguments().getParcelable(getString(R.string.share_movie));
+            if (obj instanceof Movie) {
+                mMovie = (Movie) obj;
+                Log.d(TAG, "onViewCreated: movie to share: " + mMovie);
+            } else if (obj instanceof Track) {
+                Track track = (Track) obj;
+                Log.d(TAG, "onViewCreated: track to share: " + track);
+            } else {
+                dismiss();
+            }
+
         } else {
             dismiss();
         }

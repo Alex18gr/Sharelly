@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.sharelly.alexc.sharelly.BuildConfig;
 import com.sharelly.alexc.sharelly.JsonModels.Movie;
+import com.sharelly.alexc.sharelly.JsonModels.Track;
 import com.sharelly.alexc.sharelly.Models.Post;
 import com.sharelly.alexc.sharelly.Models.User;
 import com.sharelly.alexc.sharelly.R;
@@ -42,23 +43,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-public class ShareMovieFragment extends Fragment {
+public class ShareSongFragment extends Fragment {
 
-    private static final String TAG = "ShareMovieFragment";
+    private static final String TAG = "ShareSongFragment";
 
     private View view;
     private String action;
     private String data;
-    private Movie receivedMovie = null;
+    private Track receivedSong = null;
 
     // widgets
     private ImageView expandedImageView;
     private Toolbar toolbar;
     private FloatingActionButton fab;
-    private TextView textView;
-    private TextView imdbScoreTxt;
-    private TextView rottenScoreTxt;
-    private TextView metaScoreTxt;
+    private TextView artistTxt;
+    private TextView albumTxt;
+    private TextView listenersTxt;
+    private TextView playcountTxt;
+    private TextView summaryTxt;
 
     private Fragment fragment = this;
 
@@ -66,8 +68,11 @@ public class ShareMovieFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_share_movie, container, false);
+        view = inflater.inflate(R.layout.fragment_share_song, container, false);
         data = getArguments().getString("id");
+        if (data == null || data.equals("")) {
+            receivedSong = getArguments().getParcelable("parcel_song");
+        }
         return view;
     }
 
@@ -75,20 +80,27 @@ public class ShareMovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         this.view = view;
         super.onViewCreated(view, savedInstanceState);
-        textView = view.findViewById(R.id.txtShare);
 
-
-        //textView.setText(data);
         Log.d(TAG, "onViewCreated: data set");
         setupWidgets();
         setupToolbar();
 
-        if (data != null){
-            Log.d(TAG, "onViewCreated: executing down load async task");
+        if (data != null && !data.equals("")){
+            Log.d(TAG, "onViewCreated: executing download async task");
             DownloadData downloadData = new DownloadData();
-            downloadData.execute("http://www.omdbapi.com/?i=" + data + "&apikey=" + BuildConfig.API_KEY_OMDB);
+            downloadData.execute("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key="
+                    + BuildConfig.API_KEY_LAST_FM + "&format=json&mbid=" + data);
+        } else if (receivedSong != null) {
+
+            loadData();
         } else {
-            Log.d(TAG, "onViewCreated: error: data is NULL");
+            receivedSong = getArguments().getParcelable("parcel_song");
+            if (receivedSong != null) {
+                Log.d(TAG, "onViewCreated: load recieved song from previous fragment. Not shareable.");
+                loadData();
+            } else {
+                Log.d(TAG, "onViewCreated: error: data is NULL");
+            }
         }
 
 
@@ -99,6 +111,8 @@ public class ShareMovieFragment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Share Song");
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -108,32 +122,18 @@ public class ShareMovieFragment extends Fragment {
     }
 
     private void loadData() {
-        Picasso.get().load(receivedMovie.getPoster()).into(expandedImageView);
-        ((ShareActivity)getActivity()).setActionBarTitle(receivedMovie.getTitle());
-        textView.setText(receivedMovie.getYear() + " \u00B7 "+
-        receivedMovie.getGenre());
-        for (Movie.Rating rating : receivedMovie.getRatings()) {
-            if (rating.getSource().equals("Internet Movie Database"))  {
-                imdbScoreTxt.setText(rating.getValue());
-            } else if (rating.getSource().equals("Rotten Tomatoes")) {
-                rottenScoreTxt.setText(receivedMovie.getRatings().get(1).getValue());
-            } else if (rating.getSource().equals("Metacritic")) {
-                metaScoreTxt.setText(receivedMovie.getRatings().get(2).getValue());
-            }
+        artistTxt.setText(receivedSong.getArtist().getName());
+        albumTxt.setText(receivedSong.getAlbum().getTitle());
+        if (receivedSong.getWiki() != null){
+            summaryTxt.setText(receivedSong.getWiki().getSummary());
+        } else {
+            view.findViewById(R.id.cardView3).setVisibility(View.GONE);
         }
 
-        if (imdbScoreTxt.getText().toString().equals("TextView")) {
-            imdbScoreTxt.setVisibility(View.GONE);
-            view.findViewById(R.id.postsTxt).setVisibility(View.GONE);
-        }
-        if (rottenScoreTxt.getText().toString().equals("TextView")) {
-            rottenScoreTxt.setVisibility(View.GONE);
-            view.findViewById(R.id.followersTxt).setVisibility(View.GONE);
-        }
-        if (metaScoreTxt.getText().toString().equals("TextView")) {
-            metaScoreTxt.setVisibility(View.GONE);
-            view.findViewById(R.id.followingTxt).setVisibility(View.GONE);
-        }
+        playcountTxt.setText(receivedSong.getPlaycount());
+        listenersTxt.setText(receivedSong.getListeners());
+        Picasso.get().load(receivedSong.getAlbum().getImages().get(2).getText()).into(expandedImageView);
+        ((ShareActivity)getActivity()).setActionBarTitle(receivedSong.getName());
 
     }
 
@@ -158,14 +158,16 @@ public class ShareMovieFragment extends Fragment {
 
         final Post newPost = new Post();
 
-        newPost.setContentId(receivedMovie.getImdbId());
-        newPost.setType(getString(R.string.content_type_movie_omdb));
+        newPost.setContentId(receivedSong.getMbid());
+        newPost.setType(getString(R.string.content_type_song_lastfm));
         newPost.setName(mTitle);
         newPost.setDescription(mDescription);
         newPost.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        newPost.setContent_title(receivedMovie.getTitle());
-        if (receivedMovie.getPoster() != null) {
-            newPost.setPost_image(receivedMovie.getPoster());
+        newPost.setContent_title(receivedSong.getName());
+        if (receivedSong.getAlbum().getImages().get(2).getText() != null) {
+            newPost.setPost_image(receivedSong.getAlbum().getImages().get(2).getText());
+        } else {
+            newPost.setPost_image(null);
         }
 
         Log.d(TAG, "createNewPost: creating new post :" + newPost);
@@ -234,9 +236,11 @@ public class ShareMovieFragment extends Fragment {
     private void setupWidgets() {
         expandedImageView = view.findViewById(R.id.expandedImage);
         fab = view.findViewById(R.id.fab);
-        imdbScoreTxt = view.findViewById(R.id.postsNumTxt);
-        rottenScoreTxt = view.findViewById(R.id.followersNumTxt);
-        metaScoreTxt = view.findViewById(R.id.followingNumTxt);
+        artistTxt = view.findViewById(R.id.txtArtist);
+        albumTxt = view.findViewById(R.id.txtAlbum);
+        summaryTxt = view.findViewById(R.id.summaryTxt);
+        listenersTxt = view.findViewById(R.id.listenersNumTxt);
+        playcountTxt = view.findViewById(R.id.playcountNumTxt);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,12 +249,17 @@ public class ShareMovieFragment extends Fragment {
 
                     case R.id.fab:{
                         //create a new note
-                        NewPostDialog dialog = new NewPostDialog();
-                        Bundle args = new Bundle();
-                        args.putParcelable(getString(R.string.share_movie), receivedMovie);
-                        dialog.setArguments(args);
-                        dialog.setTargetFragment(ShareMovieFragment.this, NewPostDialog.REQUEST_CODE);
-                        dialog.show(getActivity().getSupportFragmentManager(), getString(R.string.dialog_new_post));
+                        if (data == null || data.equals("")) {
+                            Toast.makeText(getActivity(), "You cannot share this song.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            NewPostDialog dialog = new NewPostDialog();
+                            Bundle args = new Bundle();
+                            args.putParcelable(getString(R.string.share_movie), receivedSong);
+                            dialog.setArguments(args);
+                            dialog.setTargetFragment(ShareSongFragment.this, NewPostDialog.REQUEST_CODE);
+                            dialog.show(getActivity().getSupportFragmentManager(), getString(R.string.dialog_new_post));
+                        }
+
                         break;
                     }
                 }
@@ -267,15 +276,15 @@ public class ShareMovieFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Gson gson = new Gson();
-            receivedMovie = gson.fromJson(s, Movie.class);
-            if (receivedMovie != null) {
-                Log.d(TAG, "onPostExecute: received movie: " + receivedMovie);
-                textView.append("\n" + receivedMovie);
+            Track.TrackInfo info = gson.fromJson(s, Track.TrackInfo.class);
+            receivedSong = info.getTrack();
+            if (receivedSong != null) {
+                Log.d(TAG, "onPostExecute: received track: " + receivedSong);
 
                 loadData();
 
             } else {
-                Log.d(TAG, "onPostExecute: error receiving the movie, is NULL");
+                Log.d(TAG, "onPostExecute: error receiving the track, is NULL");
             }
         }
 

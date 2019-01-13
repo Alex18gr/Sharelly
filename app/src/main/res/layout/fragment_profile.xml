@@ -12,7 +12,8 @@
         android:layout_alignParentTop="true"
         android:overScrollMode="never"
         android:id="@+id/profileScrollView"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
             android:layout_width="match_parent"

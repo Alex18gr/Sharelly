@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.sharelly.alexc.sharelly.Fragments.DashboardFragment;
+import com.sharelly.alexc.sharelly.Dashboard.DashboardFragment;
 import com.sharelly.alexc.sharelly.Fragments.NotificationFragment;
 import com.sharelly.alexc.sharelly.Home.HomeFragment;
 import com.sharelly.alexc.sharelly.Login.LoginActivity;

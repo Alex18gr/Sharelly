@@ -1,10 +1,13 @@
 package com.sharelly.alexc.sharelly.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 
-public class Post {
+public class Post implements Parcelable {
 
     private static final String TAG = "Post";
 
@@ -13,6 +16,8 @@ public class Post {
     private String contentId;
     private String description;
     private String user_id;
+    private String post_image;
+    private String content_title;
     private @ServerTimestamp Date timestamp;
 
     public Post() {
@@ -33,6 +38,44 @@ public class Post {
         this.contentId = contentId;
         this.description = description;
         this.user_id = user_id;
+    }
+
+    protected Post(Parcel in) {
+        name = in.readString();
+        type = in.readString();
+        contentId = in.readString();
+        description = in.readString();
+        user_id = in.readString();
+        post_image = in.readString();
+        content_title = in.readString();
+    }
+
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
+
+    public String getPost_image() {
+        return post_image;
+    }
+
+    public void setPost_image(String post_image) {
+        this.post_image = post_image;
+    }
+
+    public String getContent_title() {
+        return content_title;
+    }
+
+    public void setContent_title(String content_title) {
+        this.content_title = content_title;
     }
 
     public String getName() {
@@ -93,5 +136,21 @@ public class Post {
                 ", user_id='" + user_id + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(type);
+        parcel.writeString(contentId);
+        parcel.writeString(description);
+        parcel.writeString(user_id);
+        parcel.writeString(post_image);
+        parcel.writeString(content_title);
     }
 }

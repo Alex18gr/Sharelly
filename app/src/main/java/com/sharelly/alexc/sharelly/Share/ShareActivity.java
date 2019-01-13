@@ -89,6 +89,7 @@ public class ShareActivity extends AppCompatActivity {
     }
 
     public void setActionBarTitle(String title) {
+        Log.d(TAG, "setActionBarTitle: setting support action bar title to: " + title);
         getSupportActionBar().setTitle(title);
     }
 
@@ -128,7 +129,7 @@ public class ShareActivity extends AppCompatActivity {
      * @param user
      */
     private void checkCurrentUser(FirebaseUser user) {
-        Log.d(TAG, "checkCurrentUser: chacking if user is logged in");
+        Log.d(TAG, "checkCurrentUser: checking if user is logged in");
 
         if(user == null) {
             Intent intent = new Intent(mContext, LoginActivity.class);

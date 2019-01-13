@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.sharelly.alexc.sharelly.BuildConfig;
 import com.sharelly.alexc.sharelly.JsonModels.MoviesList;
+import com.sharelly.alexc.sharelly.JsonModels.Track;
 import com.sharelly.alexc.sharelly.JsonModels.TrackSearch;
 import com.sharelly.alexc.sharelly.R;
 
@@ -29,6 +30,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -241,6 +243,35 @@ public class SearchFragment extends Fragment {
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             TrackSearch track = (TrackSearch) searchListView.getItemAtPosition(i);
                             Log.d(TAG, "onItemClick: selected song: " + track);
+                            ShareSongFragment fragment = new ShareSongFragment();
+                            Bundle bundle = new Bundle();
+                            if (!track.getMbid().equals("")) {
+                                Log.d(TAG, "onItemClick: share song with id: >" + track.getMbid() + "<");
+                                bundle.putString("id", track.getMbid());
+                            } else {
+                                Track track1 = new Track();
+                                track1.setName(track.getName());
+                                Track.Artist artist = new Track.Artist();
+                                artist.setName(track.getName());
+                                track1.setArtist(artist);
+                                track1.setListeners(track.getListeners());
+                                Track.Album album = new Track.Album();
+                                Track.Image image = new Track.Image();
+                                image.setText(track.getImage().get(2).getText());
+                                List<Track.Image> images = new ArrayList<>();
+                                images.add(image);images.add(image);images.add(image);
+                                album.setImages(images);
+                                track1.setAlbum(album);
+                                Log.d(TAG, "onItemClick: song with details, not shareable. Track: " + track1);
+
+                                bundle.putParcelable("parcel_song", track1);
+                            }
+
+                            fragment.setArguments(bundle);
+                            getFragmentManager().beginTransaction()
+                                    .replace(((ViewGroup) getView().getParent()).getId(), fragment)
+                                    .addToBackStack(null)
+                                    .commit();
                         }
                     });
 

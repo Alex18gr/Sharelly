@@ -129,13 +129,14 @@ public class RegisterActivity extends AppCompatActivity {
 
                     DocumentReference newUserRef = db
                             .collection("users")
-                            .document();
+                            .document(userId);
 
                     User userDb = new User();
                     userDb.setEmail(email);
                     userDb.setUsername(username);
                     userDb.setFull_name(username);
                     userDb.setUser_id(userId);
+
 
                     newUserRef.set(userDb).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

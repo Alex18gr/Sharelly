@@ -31,6 +31,8 @@
     <string name="new_post_dialog_title">new_post_dialog_title</string>
     <string name="new_post_dialog_description">new_post_dialog_description</string>
     <string name="content_type_movie_omdb">movie/omdb</string>
+    <string name="content_type_song_lastfm">song/lastfm</string>
+    <string name="share_song">share_song</string>
     <string-array name="search_array">
         <item>Movie</item>
         <item>Song</item>

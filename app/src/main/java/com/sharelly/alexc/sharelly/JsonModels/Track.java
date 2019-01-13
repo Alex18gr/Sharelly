@@ -1,11 +1,15 @@
 package com.sharelly.alexc.sharelly.JsonModels;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.firebase.firestore.ServerTimestamp;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Track {
+public class Track implements Parcelable {
 
     @SerializedName("mbid")
     private String mbid;
@@ -21,6 +25,50 @@ public class Track {
     private Album album;
     @SerializedName("wiki")
     private Wiki wiki;
+    @SerializedName("listeners")
+    private String listeners;
+    @SerializedName("playcount")
+    private String playcount;
+
+    public Track() {
+    }
+
+    protected Track(Parcel in) {
+        mbid = in.readString();
+        name = in.readString();
+        url = in.readString();
+        duration = in.readString();
+        artist = in.readParcelable(Artist.class.getClassLoader());
+        wiki = in.readParcelable(Wiki.class.getClassLoader());
+    }
+
+    public String getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(String listeners) {
+        this.listeners = listeners;
+    }
+
+    public String getPlaycount() {
+        return playcount;
+    }
+
+    public void setPlaycount(String playcount) {
+        this.playcount = playcount;
+    }
+
+    public static final Creator<Track> CREATOR = new Creator<Track>() {
+        @Override
+        public Track createFromParcel(Parcel in) {
+            return new Track(in);
+        }
+
+        @Override
+        public Track[] newArray(int size) {
+            return new Track[size];
+        }
+    };
 
     public String getMbid() {
         return mbid;
@@ -81,22 +129,67 @@ public class Track {
     @Override
     public String toString() {
         return "Track{" +
-                "name='" + name + '\'' +
+                "mbid='" + mbid + '\'' +
+                ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
                 ", duration='" + duration + '\'' +
                 ", artist=" + artist +
                 ", album=" + album +
                 ", wiki=" + wiki +
+                ", listeners='" + listeners + '\'' +
+                ", playcount='" + playcount + '\'' +
                 '}';
     }
 
-    public class Album {
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mbid);
+        parcel.writeString(name);
+        parcel.writeString(url);
+        parcel.writeString(duration);
+        parcel.writeParcelable(artist, i);
+        parcel.writeParcelable(wiki, i);
+    }
+
+    public static class Album {
         @SerializedName("title")
         private String title;
         @SerializedName("url")
         private String url;
         @SerializedName("image")
         private List<Image> images;
+
+        public Album() {
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public List<Image> getImages() {
+            return images;
+        }
+
+        public void setImages(List<Image> images) {
+            this.images = images;
+        }
 
         @Override
         public String toString() {
@@ -108,7 +201,7 @@ public class Track {
         }
     }
 
-    public class Wiki {
+    public class Wiki implements Parcelable{
 
         @SerializedName("published")
         @Expose
@@ -119,6 +212,24 @@ public class Track {
         @SerializedName("content")
         @Expose
         private String content;
+
+        protected Wiki(Parcel in) {
+            published = in.readString();
+            summary = in.readString();
+            content = in.readString();
+        }
+
+        public final Creator<Wiki> CREATOR = new Creator<Wiki>() {
+            @Override
+            public Wiki createFromParcel(Parcel in) {
+                return new Wiki(in);
+            }
+
+            @Override
+            public Wiki[] newArray(int size) {
+                return new Wiki[size];
+            }
+        };
 
         public String getPublished() {
             return published;
@@ -152,9 +263,21 @@ public class Track {
                     ", content='" + content + '\'' +
                     '}';
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(published);
+            parcel.writeString(summary);
+            parcel.writeString(content);
+        }
     }
 
-    public class Image {
+    public static class Image implements Parcelable{
 
         @SerializedName("#text")
         @Expose
@@ -162,6 +285,26 @@ public class Track {
         @SerializedName("size")
         @Expose
         private String size;
+
+        public Image() {
+        }
+
+        protected Image(Parcel in) {
+            text = in.readString();
+            size = in.readString();
+        }
+
+        public final Creator<Image> CREATOR = new Creator<Image>() {
+            @Override
+            public Image createFromParcel(Parcel in) {
+                return new Image(in);
+            }
+
+            @Override
+            public Image[] newArray(int size) {
+                return new Image[size];
+            }
+        };
 
         public String getText() {
             return text;
@@ -186,13 +329,44 @@ public class Track {
                     ", size='" + size + '\'' +
                     '}';
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(text);
+            parcel.writeString(size);
+        }
     }
 
-    public class Artist {
+    public static class Artist implements Parcelable{
         @SerializedName("name")
         private String name;
         @SerializedName("url")
         private String url;
+
+        public Artist() {
+        }
+
+        protected Artist(Parcel in) {
+            name = in.readString();
+            url = in.readString();
+        }
+
+        public static final Creator<Artist> CREATOR = new Creator<Artist>() {
+            @Override
+            public Artist createFromParcel(Parcel in) {
+                return new Artist(in);
+            }
+
+            @Override
+            public Artist[] newArray(int size) {
+                return new Artist[size];
+            }
+        };
 
         public String getName() {
             return name;
@@ -217,11 +391,48 @@ public class Track {
                     ", url='" + url + '\'' +
                     '}';
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(name);
+            parcel.writeString(url);
+        }
     }
 
-    public class TrackInfo {
+    public class TrackInfo implements Parcelable{
         @SerializedName("track")
         private Track track;
+
+        protected TrackInfo(Parcel in) {
+            track = in.readParcelable(Track.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeParcelable(track, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public final Creator<TrackInfo> CREATOR = new Creator<TrackInfo>() {
+            @Override
+            public TrackInfo createFromParcel(Parcel in) {
+                return new TrackInfo(in);
+            }
+
+            @Override
+            public TrackInfo[] newArray(int size) {
+                return new TrackInfo[size];
+            }
+        };
 
         public Track getTrack() {
             return track;
