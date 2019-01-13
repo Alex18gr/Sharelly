@@ -11,13 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.sharelly.alexc.sharelly.BuildConfig;
 import com.sharelly.alexc.sharelly.JsonModels.Movie;
 import com.sharelly.alexc.sharelly.Models.Post;
+import com.sharelly.alexc.sharelly.Models.User;
 import com.sharelly.alexc.sharelly.R;
 import com.squareup.picasso.Picasso;
 
@@ -148,7 +156,7 @@ public class ShareMovieFragment extends Fragment {
 
     private void createNewPost(String mTitle, String mDescription) {
 
-        Post newPost = new Post();
+        final Post newPost = new Post();
 
         newPost.setContentId(receivedMovie.getImdbId());
         newPost.setType(getString(R.string.content_type_movie_omdb));
@@ -158,7 +166,65 @@ public class ShareMovieFragment extends Fragment {
 
         Log.d(TAG, "createNewPost: creating new post :" + newPost);
 
-        
+        // Add the post to the database...
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("posts").add(newPost)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: post added with id " + task.getResult().getId());
+                    addPostToUserPosts(task.getResult().getId(), newPost);
+
+                } else {
+                    Log.d(TAG, "onComplete: could not add the post. Check logs.");
+                }
+            }
+        });
+
+    }
+
+    private void addPostToUserPosts(final String id, final Post newPost) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").whereEqualTo("user_id", FirebaseAuth.getInstance()
+                .getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    User mUser = null;
+                    String mId = null;
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        mUser = document.toObject(User.class);
+                        mId = document.getId();
+                        Log.d(TAG, "onComplete: the user document id: " + mId);
+                    }
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("users")
+                            .document(mId)
+                            .collection("posts")
+                            .document(id).set(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "onComplete: post successfully added to users posts");
+                                Toast.makeText(getActivity(), "Post added successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.d(TAG, "onComplete: Could not add post. Check logs.");
+                            }
+                        }
+                    });
+
+                } else {
+                    Log.d(TAG, "onComplete: could not find user. Check logs.");
+                }
+
+
+
+            }
+        });
+
     }
 
     private void setupWidgets() {
