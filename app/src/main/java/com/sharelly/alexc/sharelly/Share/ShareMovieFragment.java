@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -61,6 +62,7 @@ public class ShareMovieFragment extends Fragment {
     private TextView metaScoreTxt;
 
     private Fragment fragment = this;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Nullable
     @Override
@@ -81,7 +83,7 @@ public class ShareMovieFragment extends Fragment {
         //textView.setText(data);
         Log.d(TAG, "onViewCreated: data set");
         setupWidgets();
-        setupToolbar();
+        //setupToolbar(null);
 
         if (data != null){
             Log.d(TAG, "onViewCreated: executing down load async task");
@@ -95,8 +97,9 @@ public class ShareMovieFragment extends Fragment {
 
     }
 
-    private void setupToolbar() {
+    private void setupToolbar(String title) {
         toolbar = view.findViewById(R.id.toolbar);
+        if (title != null) toolbar.setTitle(title);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -109,7 +112,9 @@ public class ShareMovieFragment extends Fragment {
 
     private void loadData() {
         Picasso.get().load(receivedMovie.getPoster()).into(expandedImageView);
-        ((ShareActivity)getActivity()).setActionBarTitle(receivedMovie.getTitle());
+        //((ShareActivity)getActivity()).setActionBarTitle(receivedMovie.getTitle());
+        //((ShareActivity) getActivity()).getSupportActionBar().setTitle(receivedMovie.getTitle());
+        setupToolbar(receivedMovie.getTitle());
         textView.setText(receivedMovie.getYear() + " \u00B7 "+
         receivedMovie.getGenre());
         for (Movie.Rating rating : receivedMovie.getRatings()) {
@@ -238,6 +243,8 @@ public class ShareMovieFragment extends Fragment {
         imdbScoreTxt = view.findViewById(R.id.postsNumTxt);
         rottenScoreTxt = view.findViewById(R.id.followersNumTxt);
         metaScoreTxt = view.findViewById(R.id.followingNumTxt);
+        collapsingToolbarLayout = view.findViewById(R.id.collapsing_toolbar_layout);
+        collapsingToolbarLayout.setTitleEnabled(true);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

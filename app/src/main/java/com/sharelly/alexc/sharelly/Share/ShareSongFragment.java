@@ -83,7 +83,7 @@ public class ShareSongFragment extends Fragment {
 
         Log.d(TAG, "onViewCreated: data set");
         setupWidgets();
-        setupToolbar();
+        //setupToolbar();
 
         if (data != null && !data.equals("")){
             Log.d(TAG, "onViewCreated: executing download async task");
@@ -107,11 +107,10 @@ public class ShareSongFragment extends Fragment {
 
     }
 
-    private void setupToolbar() {
+    private void setupToolbar(String title) {
         toolbar = view.findViewById(R.id.toolbar);
+        if (title != null) toolbar.setTitle(title);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Share Song");
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -133,7 +132,8 @@ public class ShareSongFragment extends Fragment {
         playcountTxt.setText(receivedSong.getPlaycount());
         listenersTxt.setText(receivedSong.getListeners());
         Picasso.get().load(receivedSong.getAlbum().getImages().get(2).getText()).into(expandedImageView);
-        ((ShareActivity)getActivity()).setActionBarTitle(receivedSong.getName());
+        //((ShareActivity)getActivity()).setActionBarTitle(receivedSong.getName());
+        setupToolbar(receivedSong.getName());
 
     }
 

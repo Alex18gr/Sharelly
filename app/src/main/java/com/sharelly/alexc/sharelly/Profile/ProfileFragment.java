@@ -87,7 +87,7 @@ public class ProfileFragment extends Fragment {
         this.view = view;
         super.onViewCreated(view, savedInstanceState);
         //scrollView.setFillViewport(true);
-
+        setRetainInstance(true);
         setupWidgets();
         setupTabLayoutAndViewPager();
 
@@ -97,7 +97,6 @@ public class ProfileFragment extends Fragment {
 
         setupFirebaseAuth();
         setupToolbar();
-        tempGridSetup();
         if (savedInstanceState == null) {
             Log.d(TAG, "onViewCreated: savedInstanceState is null !!!");
             getUserDetails();
@@ -348,40 +347,6 @@ public class ProfileFragment extends Fragment {
         };
 
         mModel.getUserLiveData().observe(getActivity(), userObserver);
-    }
-
-    private void setupImageGrid(ArrayList<String> imgURLs) {
-        ExpandableHeightGridView gridView = view.findViewById(R.id.gridView);
-
-        int gridWidth = getResources().getDisplayMetrics().widthPixels;
-        int imageWidth = gridWidth/3;
-        gridView.setColumnWidth(imageWidth);
-
-        GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview,
-                "", imgURLs);
-        gridView.setAdapter(adapter);
-        gridView.setNumColumns(3);
-        gridView.setExpanded(true);
-    }
-
-    private void tempGridSetup() {
-        ArrayList<String> imgURLs = new ArrayList<>();
-        imgURLs.add("https://cdn.shopify.com/s/files/1/0825/2951/files/Android-under-maintenance_1600x1600.png?v=1509371840");
-        imgURLs.add("https://2.bp.blogspot.com/-2ZMkSo7CnUs/WvMvSK0u9RI/AAAAAAAAFZA/zJOCZ8LUM8ol3hcHYHwVyOpc3iiYaxquACLcBGAs/s1600/Jetpack_logo.png");
-        imgURLs.add("https://tr2.cbsistatic.com/hub/i/r/2016/04/14/957569ba-49e0-4762-8a9b-032594d44404/resize/770x/e151fc109f851df34cf29116cdaddb9b/android-security-1.jpg");
-        imgURLs.add("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-Nx02HfBq_GRXRD_OoNW_pNy4YYlCKySAAd9MT68lwwcnaSR1-g");
-        imgURLs.add("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfqnbN--CdFXrLgPoqruoN__5Xcf7uX9D-jMRhSWC-SoQ6ZBWr");
-        imgURLs.add("https://cdn.vox-cdn.com/thumbor/eVoUeqwkKQ7MFjDCgrPrqJP5ztc=/0x0:2040x1360/1200x800/filters:focal(860x1034:1186x1360)/cdn.vox-cdn.com/uploads/chorus_image/image/59377089/wjoel_180413_1777_android_001.1523625143.jpg");
-        imgURLs.add("https://prod-discovery.edx-cdn.org/media/course/image/019dd154-cb89-4a24-aed5-f0b8db33d705-1becb8880fa8.small.jpg");
-        imgURLs.add("https://cdn.wccftech.com/wp-content/uploads/2017/08/download-android-8.jpg");
-        imgURLs.add("https://i.redd.it/9dbo7puxpy521.jpg");
-        imgURLs.add("https://external-preview.redd.it/62rvPqVG-hWEi9q5M_bPy878XUAEuSl7H8ejsuWEBpE.jpg?auto=webp&s=6420851201a561c6d948d327912a8e257b39c9b7");
-        imgURLs.add("https://i.redd.it/st8gdu6gcy521.jpg");
-        imgURLs.add("https://i.redd.it/b20fxfimou521.jpg");
-
-
-
-        setupImageGrid(imgURLs);
     }
 
     private void setupFirebaseAuth(){
