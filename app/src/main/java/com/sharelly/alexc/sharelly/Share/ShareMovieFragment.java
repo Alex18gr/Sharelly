@@ -1,6 +1,7 @@
 package com.sharelly.alexc.sharelly.Share;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +65,8 @@ public class ShareMovieFragment extends Fragment {
 
     private Fragment fragment = this;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private TextView plotTxt;
+    private Button searchOnNetflixBtn;
 
     @Nullable
     @Override
@@ -139,6 +143,28 @@ public class ShareMovieFragment extends Fragment {
             metaScoreTxt.setVisibility(View.GONE);
             view.findViewById(R.id.followingTxt).setVisibility(View.GONE);
         }
+
+        if (receivedMovie.getPlot() != null) {
+            plotTxt.setText(receivedMovie.getPlot());
+        }
+        searchOnNetflixBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: attempting search on Netflix app...");
+                try {
+                    Intent intent = new Intent(Intent.ACTION_SEARCH);
+                    intent.setClassName("com.netflix.mediaclient", "com.netflix.mediaclient.ui.search.SearchActivity");
+                    intent.putExtra(SearchManager.QUERY, receivedMovie.getTitle());
+                    startActivity(intent);
+
+                }
+                catch(Exception e)
+                {
+                    Toast.makeText(getActivity(), "Please install the NetFlix App!", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
 
     }
 
@@ -245,6 +271,8 @@ public class ShareMovieFragment extends Fragment {
         metaScoreTxt = view.findViewById(R.id.followingNumTxt);
         collapsingToolbarLayout = view.findViewById(R.id.collapsing_toolbar_layout);
         collapsingToolbarLayout.setTitleEnabled(true);
+        plotTxt = view.findViewById(R.id.plotTxt);
+        searchOnNetflixBtn = view.findViewById(R.id.searchNetflixBtn);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

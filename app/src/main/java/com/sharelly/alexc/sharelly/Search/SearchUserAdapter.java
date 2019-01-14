@@ -71,4 +71,12 @@ public class SearchUserAdapter extends ArrayAdapter<User> {
             placeProfileImage = view.findViewById(R.id.profile_image);
         }
     }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 }

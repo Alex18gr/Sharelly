@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -15,9 +16,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.sharelly.alexc.sharelly.JsonModels.MoviesList;
 import com.sharelly.alexc.sharelly.Models.Post;
 import com.sharelly.alexc.sharelly.Models.User;
 import com.sharelly.alexc.sharelly.R;
+import com.sharelly.alexc.sharelly.Share.ShareMovieFragment;
+import com.sharelly.alexc.sharelly.Share.ShareSongFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +55,20 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mMainFeedListView = view.findViewById(R.id.mainFeedList);
+        mFollowingUsersRecodIds = new ArrayList<>();
+        mFollowingUsersPosts = new ArrayList<>();
+        mMainFeedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Post post = (Post) mMainFeedListView.getItemAtPosition(i);
+                if (post.getType().equals(getString(R.string.content_type_movie_omdb))) {
+                    showMovieSharePage(post.getContentId());
+                } else if (post.getType().equals(getString(R.string.content_type_song_lastfm))) {
+                    showSongSharePage(post.getContentId());
+                }
+            }
+        });
         mMainFeedSwipeRefresh = view.findViewById(R.id.swipeToRefreshMainFeed);
         mMainFeedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -61,6 +79,30 @@ public class DashboardFragment extends Fragment {
             }
         });
         getFollowingUsers();
+    }
+
+    private void showSongSharePage(String contentId) {
+        ShareSongFragment fragment = new ShareSongFragment();
+        Bundle bundle = new Bundle();
+        Log.d(TAG, "onItemClick: share song with id: >" + contentId + "<");
+        bundle.putString("id", contentId);
+
+        fragment.setArguments(bundle);
+        getFragmentManager().beginTransaction()
+                .replace(((ViewGroup) getView().getParent()).getId(), fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void showMovieSharePage(String contentId) {
+        ShareMovieFragment fragment = new ShareMovieFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("id", contentId);
+        fragment.setArguments(bundle);
+        getFragmentManager().beginTransaction()
+                .replace(((ViewGroup) getView().getParent()).getId(), fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void getFollowingUsers() {

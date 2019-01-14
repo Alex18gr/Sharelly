@@ -57,6 +57,43 @@
 
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cardView2"
+            android:id="@+id/cardView3"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="2dp"
+            app:contentPadding="7dp"
+            app:cardPreventCornerOverlap="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/plotTxt"
+                android:text="Plot..."/>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cardView3"
+            android:id="@+id/cardView4"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="2dp"
+            app:contentPadding="7dp"
+            app:cardPreventCornerOverlap="true">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search on Netflix"
+                android:id="@+id/searchNetflixBtn" />
+
+        </androidx.cardview.widget.CardView>
+
 
     </RelativeLayout>
 

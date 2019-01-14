@@ -5,12 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="top">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Songs List Fragment"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+
     <com.sharelly.alexc.sharelly.CustomViews.NestedListView
         android:id="@+id/moviesListView"
         android:layout_width="match_parent"

@@ -85,7 +85,8 @@ public class SearchActivity extends AppCompatActivity {
                     String searchQuerry = textView.getText().toString();
                     if (!searchQuerry.equals("")) {
                         Log.d(TAG, "onEditorAction: performing search for the querry: " + searchQuerry);
-                        //setEmptyListView();
+                        mUsers = new ArrayList<>();
+                        adapter.setUsers(mUsers);
                         searchUser(searchQuerry);
                         hideKeyboard();
                     }

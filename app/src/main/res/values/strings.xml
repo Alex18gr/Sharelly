@@ -36,6 +36,5 @@
     <string-array name="search_array">
         <item>Movie</item>
         <item>Song</item>
-        <item>Video</item>
     </string-array>
 </resources>
