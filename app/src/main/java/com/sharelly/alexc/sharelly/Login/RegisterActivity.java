@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.LogDescriptor;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sharelly.alexc.sharelly.Models.User;
@@ -122,7 +123,17 @@ public class RegisterActivity extends AppCompatActivity {
                 if(user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged: signed in " + user.getUid());
-
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(username).build();
+                    FirebaseAuth.getInstance().getCurrentUser()
+                            .updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "User profile updated.");
+                            }
+                        }
+                    });
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();

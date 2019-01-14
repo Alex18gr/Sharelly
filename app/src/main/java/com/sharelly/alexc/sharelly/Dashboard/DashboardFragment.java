@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,11 +20,14 @@ import com.sharelly.alexc.sharelly.Models.User;
 import com.sharelly.alexc.sharelly.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class DashboardFragment extends Fragment {
 
@@ -32,6 +37,9 @@ public class DashboardFragment extends Fragment {
     private FirebaseFirestore db;
     private List<Post> mFollowingUsersPosts = new ArrayList<>();
     private List<String> mFollowingUsersRecodIds = new ArrayList<>();
+    private ListView mMainFeedListView;
+    private SwipeRefreshLayout mMainFeedSwipeRefresh;
+    private MainFeedPostListAdapter mAdapter;
 
     @Nullable
     @Override
@@ -42,7 +50,16 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        mMainFeedListView = view.findViewById(R.id.mainFeedList);
+        mMainFeedSwipeRefresh = view.findViewById(R.id.swipeToRefreshMainFeed);
+        mMainFeedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mFollowingUsersPosts = new ArrayList<>();
+                mFollowingUsersRecodIds = new ArrayList<>();
+                getFollowingUsers();
+            }
+        });
         getFollowingUsers();
     }
 
@@ -103,14 +120,28 @@ public class DashboardFragment extends Fragment {
 
     }
 
+    private void setEmptyListView() {
+        ArrayAdapter<Integer> adapter1 = new ArrayAdapter<Integer>(getActivity(),
+                0);
+        mMainFeedListView.setAdapter(adapter1);
+    }
+
     private void displayPosts() {
         Log.d(TAG, "displayPosts: posts received:");
         for (Post tempPost : mFollowingUsersPosts) {
             Log.d(TAG, "displayPosts: " + tempPost);
         }
 
+        Collections.sort(mFollowingUsersPosts, new Comparator<Post>() {
+            @Override
+            public int compare(Post post, Post t1) {
+                return t1.getTimestamp().compareTo(post.getTimestamp());
+            }
+        });
 
+        mAdapter = new MainFeedPostListAdapter(getActivity(), mFollowingUsersPosts);
+
+        mMainFeedListView.setAdapter(mAdapter);
+        mMainFeedSwipeRefresh.setRefreshing(false);
     }
-
-
 }

@@ -59,6 +59,7 @@ public class MainFeedPostListAdapter extends ArrayAdapter<Post> {
         viewHolder.placeTitle.setText(post.getName());
         viewHolder.placeTimestamp.setText(viewHolder.spf.format(post.getTimestamp()));
         viewHolder.placeDescription.setText(post.getDescription());
+        viewHolder.placeUserFirstName.setText("Posted by " + post.getUser_full_name());
         if (post.getContent_title() != null) {
             viewHolder.placeContentTitleContentType.setText(post.getType());
         } else {
@@ -86,6 +87,7 @@ public class MainFeedPostListAdapter extends ArrayAdapter<Post> {
         public final TextView placeContentTitleContentType;
         public final TextView placeTimestamp;
         public final TextView placeDescription;
+        public final TextView placeUserFirstName;
         public final ImageView placeContentImage;
         public final SimpleDateFormat spf;
 
@@ -95,6 +97,7 @@ public class MainFeedPostListAdapter extends ArrayAdapter<Post> {
             placeTimestamp = view.findViewById(R.id.timestampTxt);
             placeDescription = view.findViewById(R.id.descriptionTxt);
             placeContentImage = view.findViewById(R.id.contentImage);
+            placeUserFirstName = view.findViewById(R.id.userTxt);
             spf = new SimpleDateFormat("MMM dd, yyyy");
         }
     }

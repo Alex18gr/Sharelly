@@ -16,6 +16,7 @@ public class Post implements Parcelable {
     private String contentId;
     private String description;
     private String user_id;
+    private String user_full_name;
     private String post_image;
     private String content_title;
     private @ServerTimestamp Date timestamp;
@@ -48,6 +49,7 @@ public class Post implements Parcelable {
         user_id = in.readString();
         post_image = in.readString();
         content_title = in.readString();
+        user_full_name = in.readString();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -126,6 +128,14 @@ public class Post implements Parcelable {
         this.timestamp = timestamp;
     }
 
+    public String getUser_full_name() {
+        return user_full_name;
+    }
+
+    public void setUser_full_name(String user_full_name) {
+        this.user_full_name = user_full_name;
+    }
+
     @Override
     public String toString() {
         return "Post{" +
@@ -134,6 +144,9 @@ public class Post implements Parcelable {
                 ", contentId='" + contentId + '\'' +
                 ", description='" + description + '\'' +
                 ", user_id='" + user_id + '\'' +
+                ", user_full_name='" + user_full_name + '\'' +
+                ", post_image='" + post_image + '\'' +
+                ", content_title='" + content_title + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
     }
@@ -152,5 +165,6 @@ public class Post implements Parcelable {
         parcel.writeString(user_id);
         parcel.writeString(post_image);
         parcel.writeString(content_title);
+        parcel.writeString(user_full_name);
     }
 }

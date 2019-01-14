@@ -43,8 +43,11 @@ public class MoviesFragment extends Fragment {
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         } else {
-            adapter = new MoviePostListAdapter(getActivity(), posts);
-            mListView.setAdapter(adapter);
+            if (getActivity()!=null){
+                adapter = new MoviePostListAdapter(getActivity(), posts);
+                mListView.setAdapter(adapter);
+            }
+
         }
     }
 

@@ -10,11 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -25,6 +28,7 @@ import com.sharelly.alexc.sharelly.Models.User;
 import com.sharelly.alexc.sharelly.R;
 import com.sharelly.alexc.sharelly.Utils.ExpandableHeightGridView;
 import com.sharelly.alexc.sharelly.Utils.GridImageAdapter;
+import com.sharelly.alexc.sharelly.Utils.PrefsFragment;
 import com.sharelly.alexc.sharelly.ViewModels.UserModel;
 
 import java.util.ArrayList;
@@ -36,6 +40,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -65,6 +71,7 @@ public class ProfileFragment extends Fragment {
     private TextView followersNumTxt;
     private TextView followingNumTxt;
     private TextView postsNumTxt;
+    private User user;
 
     @Nullable
     @Override
@@ -136,7 +143,7 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        User user = null;
+                        user = null;
                         String userRecordId = null;
                         for(QueryDocumentSnapshot document: task.getResult()){
                             user = document.toObject(User.class);
@@ -240,8 +247,11 @@ public class ProfileFragment extends Fragment {
                 switch(item.getItemId()) {
                     case R.id.miSettings:
                         Log.d(TAG, "onMenuItemClick: Navigating to Profile Preferences");
-//                        Intent intent = new Intent(getActivity(), AccountSettingActivity.class);
-//                        startActivity(intent);
+                        getFragmentManager().beginTransaction()
+                                .replace(((ViewGroup) getView().getParent()).getId(),
+                                        new PrefsFragment())
+                                .addToBackStack(null)
+                                .commit();
                         break;
                     case R.id.miLogout:
                         Log.d(TAG, "onMenuItemClick: navigating back to login screen.");
@@ -255,6 +265,22 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+    }
+    private void changeDisplayName() {
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(user.getFull_name()).build();
+        FirebaseAuth.getInstance().getCurrentUser()
+                .updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "User profile updated.");
+                    Toast.makeText(getActivity(), "Profile updated with deisplay name: " +
+                                    FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 

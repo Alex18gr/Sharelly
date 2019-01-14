@@ -164,6 +164,7 @@ public class ShareSongFragment extends Fragment {
         newPost.setDescription(mDescription);
         newPost.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
         newPost.setContent_title(receivedSong.getName());
+        newPost.setUser_full_name(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         if (receivedSong.getAlbum().getImages().get(2).getText() != null) {
             newPost.setPost_image(receivedSong.getAlbum().getImages().get(2).getText());
         } else {

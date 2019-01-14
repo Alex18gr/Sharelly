@@ -164,6 +164,7 @@ public class ShareMovieFragment extends Fragment {
         newPost.setDescription(mDescription);
         newPost.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
         newPost.setContent_title(receivedMovie.getTitle());
+        newPost.setUser_full_name(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         if (receivedMovie.getPoster() != null) {
             newPost.setPost_image(receivedMovie.getPoster());
         }

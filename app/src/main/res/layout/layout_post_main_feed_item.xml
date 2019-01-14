@@ -1,51 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_margin="5dp"
+    app:cardCornerRadius="2dp"
+    app:contentPadding="7dp"
+    app:cardPreventCornerOverlap="true">
 
-    <ImageView
-        android:id="@+id/contentImage"
-        android:layout_width="100dp"
-        android:layout_height="160dp"
-        android:src="@drawable/ic_profile"
-        android:padding="5dp"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="160dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/titleTxt"
+            android:id="@+id/userTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="24sp" />
+            android:text="Posted by __DISPLAY NAME__"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="@drawable/bottom_stroke"/>
 
-        <TextView
-            android:id="@+id/contentTitleContentTypeTxt"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/timestampTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/descriptionTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textStyle="italic" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_below="@id/userTxt"
+            android:padding="16dp">
 
 
-</LinearLayout>
+
+            <ImageView
+                android:id="@+id/contentImage"
+                android:layout_width="100dp"
+                android:layout_height="160dp"
+                android:src="@drawable/ic_profile"
+                android:padding="5dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="160dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/titleTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/contentTitleContentTypeTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/timestampTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/descriptionTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textStyle="italic" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</androidx.cardview.widget.CardView>

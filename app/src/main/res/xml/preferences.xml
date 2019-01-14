@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Profile Settings">
+        <EditTextPreference
+            android:key="edit_display_name_preference"
+            android:title="Edit Display Name"
+            android:summary="Change the displayed name"/>
+        <EditTextPreference
+            android:key="edit_description_preference"
+            android:title="Edit Profile Description"
+            android:summary="Edit your profile description text"/>
+
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Account Settings">
+
+        <Preference
+            android:key="account_logout"
+            android:title="Account Logout"
+            android:summary="Logout the account from this device"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
